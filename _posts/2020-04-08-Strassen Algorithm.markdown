@@ -13,21 +13,33 @@ author : Sang Jin
 
 행렬 A, B와 두 행의 곱의 결과 C가 있다고하자.
 
-![A](C:\Users\이상진\my-awesome-site\assets\images\A.jpg)
+
+
+
 
 일반적인 행렬의 곱은 다음과 같으며, 총 8번의 곱셉과 네번의 덧셈으로 연산된다.
 
-![B](C:\Users\이상진\my-awesome-site\assets\images\B.png)
+
+
+
 
 스트라센에서 행렬의 곱셉을 더하기 연산으로 풀어 각 원소를 구할 수 있는 M이라는 연산 행렬로 표현한다.
 
 이러한 M행렬은 일곱번의 곱셈과 10번의 덧셈으로 연산으로 나타낼 수 있으며 아래 와 같이 표현한다.
 
-![C](C:\Users\이상진\my-awesome-site\assets\images\C.png)
+
+
+
+
+
 
 최종 C행렬은 M행렬의 더하기 연산으로 이루어져 있으며, 각 원소에 해당하는 방법이있다.
 
-![D](C:\Users\이상진\my-awesome-site\assets\images\D.jpg)
+
+
+
+
+
 
 ### 결론
 
