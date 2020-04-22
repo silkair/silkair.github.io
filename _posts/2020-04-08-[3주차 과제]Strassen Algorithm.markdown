@@ -1,6 +1,6 @@
 ---
 layout: single
-title:  [3주차 과제]Strassen Algorithm.
+title: Strassen Algorithm.
 date:   2020-04-08 17:33:09 +0900
 categories: jekyll update
 author : Sang Jin
