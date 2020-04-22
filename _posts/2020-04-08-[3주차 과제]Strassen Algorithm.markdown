@@ -1,6 +1,4 @@
 ---
-
-
 layout: single
 title:  Strassen Algorithm
 date:   2020-04-08 17:33:09 +0900
@@ -77,127 +75,50 @@ author : Sang Jin
 
 ~~~java
  public class Strassen {
-
- 
-
        public static void main(String[] args) {
-
-            
-
              int n = 1024;
-
-            
-
              int[][] x = initMetrix(n);
-
-             int[][] y = initMetrix(n);
-
-            
-
+             int[][] y = initMetrix(n);     
              int[][] nomalResult = Strassen.metrixMul(n, x, y);
-
-            
-
              Strassen strassen = new Strassen();
-
-            
-
-             int[][] strassenReslut = strassen.excuteStrassen(x, y);
-
-            
-
+             int[][] strassenReslut = strassen.excuteStrassen(x, y);  
              boolean checkMetrix = true;
-
              for (int i = 0; i < n; i++) {
-
-                   
-
-                    for (int j = 0; j < n; j++) {
-
-                          
-
+                    for (int j = 0; j < n; j++) { 
                            if (nomalResult[i][j] != strassenReslut[i][j]) {
-
                                  checkMetrix = false;
-
                            }
-
                     }
-
-                   
-
              }
-
-            
-
-            
-
-             System.out.println("결과 : " + checkMetrix);
-
-            
-
+             System.out.println("결과 : " + checkMetrix);       
        }
-
-      
 
        public static int[][] initMetrix(int n) {
-
-            
-
              Random r = new Random();
-
-            
-
              int[][] resultMetrix = new int [n][n];
-
-            
-
              for (int i = 0; i < n; i++) {
-
                     for (int j = 0; j < n; j++) {
-
                            resultMetrix[i][j] = r.nextInt(30);
-
                     }
-
              }
-
              return resultMetrix;
-
        }
-
-      
-
-      
-
+     
        public int[][] excuteStrassen(int[][] metrixX, int[][] metrixY) {
-
-            
-
+ 
              // 스트라센의 경우 n*n 행렬로 연산
-
              int n = metrixX.length;
 
-            
-
              // 임계 차원 보다 작을 경우 기존 메트릭스 곱으로 풀이
-
              if (n <= 2) {
 
                     return metrixMul(n, metrixX, metrixY);
-
              }
-
-            
-
+ 
              // 4 등분
-
              int rank = n / 2;
-
-            
-
+           
              // 배열 분해
-
              int[][] a11 = subMetrix(rank, 0, 0, metrixX);
 
              int[][] a12 = subMetrix(rank, 0, rank, metrixX);
@@ -213,9 +134,7 @@ author : Sang Jin
              int[][] b21 = subMetrix(rank, rank, 0, metrixY);
 
              int[][] b22 = subMetrix(rank, rank, rank, metrixY);
-
-                          
-
+              
              int[][] m1 = excuteStrassen(metrixSum(a11, a22), metrixSum(b11, b22)); // m1=(a11+a11)(b11+b22)
 
              int[][] m2 = excuteStrassen(metrixSum(a21, a22), b11); // m2=(a21+a22)b11
@@ -230,163 +149,68 @@ author : Sang Jin
 
              int[][] m7 = excuteStrassen(metrixSub(a12, a22), metrixSum(b21, b22)); // m7=(a12-a22)(a21+b22)
 
-            
-
              // 결과 생성
-
              int[][] c11 = metrixSum(metrixSub(metrixSum(m1, m4), m5), m7); // c11 = m1 + m4 - m5 + m7
-
              int[][] c12 = metrixSum(m3, m5); // c12 = m3 + m5
-
              int[][] c21 = metrixSum(m2, m4); // c21 = m2 + m4
-
-             int[][] c22 = metrixSum(metrixSub(metrixSum(m1, m3), m2), m6); // c22 = m1 + m3 - m2 + m6
-
-            
-
+             int[][] c22 = metrixSum(metrixSub(metrixSum(m1, m3), m2), m6); // c22 = m1 + m3 - m2 + m6        
              // 결합
-
              return combin(c11, c12, c21, c22);
-
        }
-
-      
-
        private int[][] combin(int[][] c11, int[][] c12, int[][] c21, int[][] c22) {
-
              int n = c11.length;
-
- 
-
              int[][] resultMetrix = new int [n*2][n*2];
-
-            
-
              for (int i = 0; i < n; i ++) {
-
                     for (int j = 0; j < n; j++) {
-
                            resultMetrix[i][j] = c11[i][j]; // 11
-
                            resultMetrix[i][j + n] = c12[i][j]; // 12
-
                            resultMetrix[i + n][j] = c21[i][j]; // 21
-
                            resultMetrix[i + n][j + n] = c22[i][j]; // 22
-
                     }
-
              }
-
              return        resultMetrix;
-
        }
 
-      
-
-       private int[][] subMetrix(int n, int startX, int startY, int[][] metrix) {
-
-            
-
+       private int[][] subMetrix(int n, int startX, int startY, int[][] metrix) {           
              int[][] subMetirx = new int[n][n];
-
-            
-
              for (int i = 0, x = startX; i < n; i++, x++) {
-
                     for (int j = 0, y = startY; j < n; j++, y++) {
-
                            subMetirx[i][j] = metrix[x][y];
-
                     }
-
              }
-
              return subMetirx;
-
-       }
-
-      
-
+       }     
        private int[][] metrixSum(int[][] metrixX, int[][] metrixY) {
-
              int n = metrixX.length;
-
              int[][] metrixResult = new int[n][n];
-
-            
-
              for (int i = 0; i < n; i++) {
-
                     for (int j = 0; j < n; j++) {
-
                            metrixResult[i][j] = metrixX[i][j] + metrixY[i][j];
-
                     }
-
              }
-
-            
-
              return metrixResult;
-
-       }
-
-      
-
+       }  
        private int[][] metrixSub(int[][] metrixX, int[][] metrixY) {
-
              int n = metrixX.length;
-
              int[][] metrixResult = new int[n][n];
-
-            
-
              for (int i = 0; i < n; i++) {
-
                     for (int j = 0; j < n; j++) {
-
                            metrixResult[i][j] = metrixX[i][j] - metrixY[i][j];
-
                     }
-
              }
-
              return metrixResult;
-
        }
 
-      
-
-       public static int[][] metrixMul(int n, int[][] metrixX, int[][] metrixY) {
-
-            
-
+       public static int[][] metrixMul(int n, int[][] metrixX, int[][] metrixY) {        
              int [][] result = new int[n][n];
-
-            
-
              for (int i = 0; i < n; i++) {
-
                     for (int j = 0; j < n; j++) {
-
                            for (int k = 0; k < n; k++) {
-
                                  result[i][j] += metrixX[i][k] * metrixY[k][j];
-
                            }
-
                     }
-
-                   
-
              }
-
-            
-
              return result;
-
        }
-
 }
 ~~~

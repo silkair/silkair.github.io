@@ -1,0 +1,508 @@
+---
+layout: single
+title:  Strassen Algorithm
+date:   2020-04-08 17:33:09 +0900
+categories: jekyll update
+author : Sang Jin
+---
+# ProJect 자판기
+
+### 1. 팀원
+
+* 201601757 황주환
+* 201501599 이범호
+
+* 201601673 강석동
+
+* 201901693 이상진
+
+### 2.  자판기
+
+- 자판기 모양
+
+  (1) SWING GUI를 사용하여 디자인
+
+  (2) 자판기 상단부
+
+   메뉴 이미지 및 버튼 설정, 수량 텍스트 설정 (+,- 버튼으로 수량 증가,감소)
+
+  (3) 자판기 중단부 
+
+  합계 버튼 및 텍스트 설정 (합계버튼으로 주문 총 금액 출력)
+
+  (4) 자판기 하단부
+
+  "최소한의 잔돈 개수 & 그리디 알고리즘 " 텍스트 출력
+
+  
+
+- 버튼 이벤트 처리
+
+  (1)   java.awt.event.ActionEvent 와 java.awt.event.ActionListener 이용
+
+  (2)  ㅡ 버튼 이벤트
+
+   "ㅡ" 버튼 입력 시 자판기 상단부의 메뉴별 수량 감소
+
+  (3)  + 버튼 이벤트
+
+  " + " 버튼 입력시 자판기상단부의 메뉴별 수량 증가
+
+  (4) 합계 버튼 이벤트
+
+  "합계" 버튼 입력시 각 메뉴별 가격과 수량을 곱하고 다 더한 값을 텍스트 출력
+
+  (5) 현금 투입 버튼 이벤트
+
+  "현금 투입" 버튼 입력시 텍스트에 쓰여진 숫자(투입 금액)를 입력받고
+
+  투입 금액 - 합계 = 거스름 돈을  한뒤
+
+  거스름 돈을 매개 변수로 잔돈 반환 알고리즘 호출
+
+  
+
+- 잔돈 반환 부
+
+  (1)  각 알고리즘 별 동전의 종류,개수를 보여주기 위한 라벨과 텍스트 설정
+
+  (2) 계산 버튼 이벤트
+
+  "계산" 버튼 입력시 각각의 알고리즘 함수를 호출
+
+  (3) 그리디 알고리즘 (case 1)
+
+  coin_change(int input, JTextField[] changeTf) 함수
+
+  그리디 알고리즘을 활용하여 동전 별 개수와 총 개수 출력
+
+  (4) 동적 계획 알고리즘 (case 2)
+
+  coinChangeProblem(int money,JTextField[] changeTf)함수 
+
+  동적계획 알고리즘을 활용하여 동전 별 개수와 총 개수 출력
+
+  
+
+  ### 3. 전체 소스코드
+
+  ```
+  import java.awt.*;
+  import java.awt.event.ActionEvent;
+  import java.awt.event.ActionListener;
+  import javax.swing.*;
+   
+  class inputChange extends JFrame {
+  	
+        int[] coin = {50000, 10000, 1600, 1000, 500, 100, 50,  10, 1}; //동전의 수, 종류
+        private JLabel changeLa =new JLabel();
+        private JTextField[] changeTf1 = new JTextField[coin.length+2]; //CASE 1 
+        private JTextField[] changeTf2 = new JTextField[coin.length+2]; //CASE 2
+        private JButton changeBtn = new JButton("계산"); 
+        
+        public void coin_change(int input, JTextField[] changeTf){
+             
+              int[][] C = new int[coin.length][2]; //동전 종류와 갯수에 대한 배열
+              
+              for(int j=0; j<coin.length; j++){
+                 C[j][0]=coin[j]; //동전 종류 삽입
+                 C[j][1]=0; //종류별 갯수 초기화
+              }
+             
+              int sol=0; //0으로 시작하여 카운팅
+              int i=0; //i는 밑의 반복문을 위한 변수
+              while(true) { //i값은 동전 크기순으로 밑의 조건문을 만족하면 다음 동전으로넘어감
+                    if(input == 0) break; //0원이면 브레이크
+                    else if(input >=C[i][0]) { //비교하는 돈보다 크면 비교 그리디 알고리즘
+                       sol++; //총 갯수 카운팅
+                       input = input - C[i][0]; //돈에 동전을 뺌
+                       C[i][1]++; //종류 별 동전 갯수 카운팅
+                    }
+                    else i++; //작으면 아랫 동전으로 이동
+                    
+              }
+              
+              for(i=0;i<coin.length;i++){ //각 동전별 갯수 텍스티필드에 삽입
+                 changeTf[i+1].setText(Integer.toString(C[i][1]));
+              }   
+              
+              changeTf[coin.length+1].setText(Integer.toString(sol)); //총 갯수 삽입
+              
+              return;
+              }
+        
+        inputChange(int money) { // 잔돈 반환 함수 
+           setTitle("거스름 돈"); //제목
+           getContentPane().setBackground(Color.YELLOW);
+           setLayout(null);
+           
+           changeLa = new JLabel("잔돈"); //Main클래스에서 잔돈을 받기 때문에 금액에서 잔돈으로 수정 
+           changeLa.setSize(40, 20);
+           changeLa.setLocation(30,20);
+           add(changeLa);
+           
+           changeTf1[0]=new JTextField(30); //빈칸 생성
+           changeTf1[0].setSize(100, 20);
+           changeTf1[0].setLocation(90, 20);
+           changeTf1[0].setText(Integer.toString(money));
+           add(changeTf1[0]);
+           
+           changeBtn.setSize(70, 20);
+           changeBtn.setLocation(200, 20);
+           changeBtn.addActionListener(new ActionListener() { //계산 연산
+              @Override
+              public void actionPerformed(ActionEvent e) {
+                 String input=changeTf1 [0].getText();
+                 if(input.length()==0)
+                    return;
+                 
+                 int money = Integer.parseInt(input); 
+                 
+                 coin_change(money, changeTf1);
+                 coinChangeProblem(money, changeTf2);
+        
+                 
+              }
+           });
+           
+           add(changeBtn);
+           
+           changeLa = new JLabel("case 1"); //case 1 제목 삽입
+           changeLa.setSize(40, 20);
+           changeLa.setLocation(50,60);
+           add(changeLa);
+           
+        
+           for(int i=1; i<=coin.length; i++) {
+              changeLa=new JLabel(Integer.toString(coin[i-1])+"원");  //돈 글 삽입
+              changeLa.setHorizontalAlignment(JLabel.RIGHT);
+              changeLa.setSize(50, 20);
+              changeLa.setLocation(50, 70+(i*20));
+              
+              changeTf1[i] = new JTextField(30);                      // 돈 옆 빈칸 삽입 및 액수 삽입
+              changeTf1[i].setHorizontalAlignment(JTextField.CENTER);
+              changeTf1[i].setSize(70, 20);
+              changeTf1[i].setLocation(120, 70+(i*20));
+              add(changeLa);
+              add(changeTf1[i]);
+           }
+           
+           changeLa = new JLabel("갯수");
+           changeLa.setSize(40, 20);
+           changeLa.setLocation(50,280);
+           add(changeLa);
+           
+           changeTf1[coin.length+1] = new JTextField(30); // changeTf1 마지막 칸에 총 갯수 새롭게 추가
+           changeTf1[coin.length+1].setHorizontalAlignment(JTextField.CENTER);
+           changeTf1[coin.length+1].setSize(70, 20);
+           changeTf1[coin.length+1].setLocation(110, 280);
+           add(changeTf1[coin.length+1]);
+           
+           
+           changeLa = new JLabel("case 2"); //case 2 제목 삽입
+           changeLa.setSize(40, 20);
+           changeLa.setLocation(350,60);
+           add(changeLa);
+           
+           for(int i=1; i<=coin.length; i++) {
+              changeLa=new JLabel(Integer.toString(coin[i-1])+"원");
+              changeLa.setHorizontalAlignment(JLabel.RIGHT);
+              changeLa.setSize(50, 20);
+              changeLa.setLocation(350, 70+(i*20));
+              
+              changeTf2[i] = new JTextField(30);
+              changeTf2[i].setHorizontalAlignment(JTextField.CENTER);
+              changeTf2[i].setSize(70, 20);
+              changeTf2[i].setLocation(420, 70+(i*20));
+              add(changeLa);
+              add(changeTf2[i]);
+           }
+           
+           changeLa = new JLabel("갯수");
+           changeLa.setSize(40, 20);
+           changeLa.setLocation(350,280);
+           add(changeLa);
+           
+           changeTf2[coin.length+1] = new JTextField(30);
+           changeTf2[coin.length+1].setHorizontalAlignment(JTextField.CENTER);
+           changeTf2[coin.length+1].setSize(70, 20);
+           changeTf2[coin.length+1].setLocation(410, 280);
+           add(changeTf2[coin.length+1]);
+           
+        
+           
+           setSize(600, 400); //change 크기
+           setVisible(true);
+        }
+        
+        public void coinChangeProblem(int money,JTextField[] changeTf) {
+           
+           int[] minCoin=new int[money+1]; // 돈의 총 최소 개수
+           int[][] minCoinArray=new int[money+1][coin.length]; // 돈의 각 코인의 최소개수
+           
+           
+           
+           for(int i=0; i<=money; i++) {
+              minCoin[i]=999999999;   // //거스름돈 당 최소개수를 최고수 무한에 가까운 수로 초기화  나중에 첫번째 값을 최솟값으로 넣어서 최솟값을 구하기 위해서다,
+              for(int j=0; j<coin.length; j++)
+                 minCoinArray[i][j]=0;  // 거스름돈 당 각 동전의 갯수 0으로 초기화
+           }
+           
+           minCoin[0]=0; // 거스름돈 0원에 최소동전 갯수 0개
+         //거스름돈 알고리즘
+           for(int j=1; j<=money; j++){ //1원 부터 거스름돈 까지의 카운트
+              for(int i=0; i<coin.length; i++) { //동전 종류 카운트
+                 
+                 if(coin[i]<=j){//거스름돈과 동전 비교
+                    if((minCoin[j-coin[i]]+1)<minCoin[j]) {   //동전을 뺀 거스름돈의 최소개수+1(뺀 동전의 개수)와 거스름돈의 최소개수 비교
+                       for(int k=0; k<coin.length; k++)
+                      	 //동전을 뺀 거스름돈의 동전별 갯수와 거스름돈의 동전별 갯수를 같게 한다.
+                          minCoinArray[j][k]=minCoinArray[j-coin[i]][k];
+                     //최소갯수에 뺀 동전을 더한다.
+                       minCoin[j]=minCoin[j-coin[i]]+1;
+                       //동전 별 갯수에 뺀 동전을 더한다,
+                       minCoinArray[j][i]++;
+                    }
+              }
+              
+           }
+           }
+           
+           for(int i=0; i < coin.length; i++) { 
+              changeTf[i+1].setText(Integer.toString(minCoinArray[money][i]));  //각 동전 별 개수
+           }
+           
+           changeTf[coin.length+1].setText(Integer.toString(minCoin[money])); //거스름돈 동전 개수
+        }
+  }
+  
+  
+  
+  
+  public class Main {
+     
+  
+   
+      public Main() {
+   
+          // 디자인단
+          // 프레임 설정단
+          JFrame frame = new JFrame("자판기"); //창 이름 자판기로 설정
+          frame.setBounds(0, 0, 600, 500); // 프레임의 크기 가로 600 세로 500 설정
+          frame.setBackground(Color.black); // 프레임의 배경색 블랙 설정
+   
+          // 폰트(버튼의 크기를 줄이기 위해서 사용 && 글자 크기를 키우기 위해 사용)
+          Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 18); 
+          Font font1 = new Font(Font.MONOSPACED, Font.BOLD, 22);  
+         
+          // 위쪽 패널 설정
+          Panel North = new Panel(); // 패널 생성
+          North.setBackground(Color.LIGHT_GRAY); // 패널 배경색(밝은 회색) 설정
+          North.setLayout(null); //layout null 설정
+          North.setSize(0, 370); // 패널의 사이즈 세로 370 설정
+          North.setFont(font); // 패널 폰트 설정
+   
+          // 배열 설정 부분
+          String menu[] = {"햄버거", "콜라","라면"}; // 메뉴 이름 
+          int price[] = {5000,1000,2500}; // 메뉴 가격
+          JButton[] button = new JButton[3]; // 이미지가 들어갈 버튼
+          JButton[] plus = new JButton[3]; // + 버튼
+          JButton[] minus = new JButton[3]; // - 버튼
+          JTextField[] number = new JTextField[3]; // 수량 텍스트
+          JLabel[] label = new JLabel[3]; // // 메뉴 이름이 들어갈 라벨
+          ImageIcon icon[] = new ImageIcon[3]; // 이미지 콘 
+   
+          // 버튼 설정 부분 (메뉴가 3개라 3번 반복)
+          for(int i = 0;i<3;i++) {
+             button[i] = new JButton(menu[i]); // 이미지가 들어갈 버튼 생성
+             button[i].setBounds(25+i*200,50,150,200); // 이미지가 들어갈 버튼 위치 및 크기 설정
+             
+            number[i] = new JTextField("0"); // 수량 텍스트 0으로 보이게 하고 생성
+            number[i].setBackground(Color.white); // 수량 텍스트 배경화면 하얀색으로 설정
+            number[i].setEditable(true); // 수량 편집 가능 
+            number[i].setBounds(button[i].getX()+50, button[i].getY()+ 230, 50 , 20);
+            // 수량 텍스트 위치 및 크기 설정
+            plus[i] = new JButton("+"); // +버튼 생성
+            plus[i].setBounds(button[i].getX() + 100 , number[i].getY() , 50, 20);
+            // +버튼 위치 및 크기 설정
+            plus[i].setEnabled(true); // +버튼 사용 가능 설정
+            
+            minus[i] = new JButton("-"); // -버튼 생성
+            minus[i].setBounds(button[i].getX(), number[i].getY(), 50, 20);
+            // -버튼 위치 및 크기 설정
+            minus[i].setEnabled(true); // -버튼 사용 가능 설정
+            
+            label[i] = new JLabel(price[i] + "원"); // 가격이 들어갈 라벨 생성
+            label[i].setBounds(button[i].getX() + 50 , number[i].getY()-25,100,20);
+            // 가격이 들어갈 라벨 위치 및 크기 설정
+            
+            //패널에 추가
+            North.add(button[i]); 
+            North.add(number[i]); 
+            North.add(plus[i]);
+            North.add(minus[i]);
+            North.add(label[i]);
+          }
+          
+          //이미지 넣는부분
+          icon[0] = new ImageIcon("images/햄버거.png"); //이미지 아이콘 생성
+          Image w = icon[0].getImage(); //이미지 아이콘으로부터 이미지 추출
+           w = w.getScaledInstance(150,200,java.awt.Image.SCALE_SMOOTH); 
+           // 버튼 크기에 맞게 사이즈 조절
+          icon[0] = new ImageIcon(w); //다시 아이콘 배열에 이미지 아이콘 생성
+          button[0].setIcon(icon[0]); //버튼에 이미지 설정
+          
+          icon[1] = new ImageIcon("images/콜라.jpg"); //이미지 아이콘 생성
+          Image q = icon[1].getImage(); //이미지 아이콘으로부터 이미지 추출
+          q = q.getScaledInstance(150,200,java.awt.Image.SCALE_SMOOTH);
+            // 버튼 크기에 맞게 사이즈 조절
+         icon[1] = new ImageIcon(q);  //다시 아이콘 배열에 이미지 아이콘 생성
+          button[1].setIcon(icon[1]);//버튼에 이미지 설정
+      
+          icon[2] = new ImageIcon("images/신라면.png");//이미지 아이콘 생성
+          Image e = icon[2].getImage(); //이미지 아이콘으로부터 이미지 추출
+          e = e.getScaledInstance(150,200,java.awt.Image.SCALE_SMOOTH);
+           // 버튼 크기에 맞게 사이즈 조절
+         icon[2] = new ImageIcon(e);//다시 아이콘 배열에 이미지 아이콘 생성
+          button[2].setIcon(icon[2]);//버튼에 이미지 설정
+          
+          
+           //합계부분
+          JButton sum1 = new JButton("합계"); // 합계 버튼 생성
+          sum1.setBounds(button[1].getX(),320,60,30); // 버튼 크기 및 위치 설정
+          JTextField sum2 = new JTextField(10); // 합계를 나타낼 텍스트 생성
+          sum2.setBounds(button[1].getX()+60,320,80,30); // 텍스트 크기 및 위치설정
+          sum2.setBackground(Color.white); // 텍스트 배경 하얀색 설정
+          sum2.setEditable(false); // 텍스트 편집 불가
+          North.add(sum1); //패널에 추가
+          North.add(sum2); //패널에 추가
+   
+   
+          // 중앙
+          Panel center = new Panel();
+          center.setFont(font);
+          center.setSize(0,50);
+          center.setBackground(Color.LIGHT_GRAY);
+          
+          //현금투입창
+          JButton money = new JButton("현금투입"); //현금투입 버튼 생성
+          JTextField money1 = new JTextField(10); //현금을 입력할 텍스트 생성
+          money1.setEditable(true);//텍스트 편집가능
+          center.add(money);//패널에 추가
+          center.add(money1);//패널에 추가
+          
+          //남쪽
+          Panel South = new Panel();// 아래쪽 패널 생성
+          South.setBackground(Color.WHITE); //패널 배경 하얀색 설정
+          JTextField aglz = new JTextField(20); // 텍스트 생성
+          aglz.setBackground(Color.WHITE); //텍스트 배경 하얀색 설정
+          aglz.setEditable(false); // 텍스트 편집 불가능
+          aglz.setText("          최소한의 잔돈 개수 & 그리디 알고리즘"); //텍스트 내용 설정
+          South.add(aglz); // 남쪽 패널에 추가
+          
+          
+          //프레임에 패널 추가
+          frame.add(North, BorderLayout.NORTH);
+          frame.add(center, BorderLayout.CENTER);
+          frame.add(South, BorderLayout.SOUTH);
+          
+          //수량표시를 위한 배열 선언
+          int count[] = new int[3];
+          count[0]=0;
+          count[1]=0;
+          count[2]=0;
+                       
+          //이벤트처리
+          for(int i = 0;i<3;i++) {
+             int j =i;
+              // "-" 버튼 이벤트
+              minus[i].addActionListener(new ActionListener() {
+   
+                  @Override
+                  public void actionPerformed(ActionEvent e) {
+                      if (count[j] > 0) { //수량이 0이 아닐시 실행
+                          count[j] = count[j] - 1; //수량-1 
+                          number[j].setText(count[j] + ""); //수량 텍스트 출력
+                         
+                      }
+                  }
+              });
+              
+              // "+" 버튼 이벤트
+              plus[i].addActionListener(new ActionListener() {
+   
+                  @Override
+                  public void actionPerformed(ActionEvent e) {
+                      count[j] = count[j] + 1; //수량 +1
+                      number[j].setText(count[j] + ""); //수량 텍스트 출력
+                      
+                      }
+                  }
+              );
+              // "합계" 버튼 이벤트
+              sum1.addActionListener(new ActionListener() {
+                  
+                  @Override
+                  public void actionPerformed(ActionEvent e) {
+                     int result = 0; // 합계 변수 
+                      for(int k =0 ; k<3;k++) {
+                         result += count[k]*price[k]; // 합계변수에 각 메뉴별 수량* 가격을 더한다
+                      }
+                      sum2.setText(result+""); // 합계 텍스트 출력
+                     
+                  }
+              });
+  
+              
+          }
+          // "현금투입" 버튼 이벤트
+             money.addActionListener(new ActionListener() {
+                @Override
+               public void actionPerformed(ActionEvent e) {
+                   String input=money1.getText(); //TEXT들 저장 money1 텍스트필드에는 입력받은 금액이 저장되있음.
+                  if(input.length()==0)
+                     return;
+                  
+                  String discount=sum2.getText(); //sum2 텍스트필드에는 제품들 총 가격이 나와있음.
+                  if(discount.length()==0)
+                     return; //0이면 나가기
+                  
+                  int inputMoney = Integer.parseInt(input); //TEXT 숫자로 변환
+                  int discountMoney=Integer.parseInt(discount);
+                  
+                  int chargeMoney; //남은돈
+                  
+                  chargeMoney=inputMoney-discountMoney; //금액-상품가격
+                  
+                  new inputChange(chargeMoney); //거스름돈에 계산하는 창을 실행
+                }
+             });
+  
+         
+         
+          frame.setVisible(true);
+   
+      }
+   
+      // 메인
+      public static void main(String[] args) {
+          new Main(); // 메인에서 자판기 화면 호출
+      }
+   
+  }
+  
+  ```
+
+  ### 4. 결과 화면
+
+  ![결과 1](C:\Users\이상진\my-awesome-site\images\결과 1.png)
+
+  ![결과 2](C:\Users\이상진\my-awesome-site\images\결과 2.png)
+
+  +,- 버튼으로 수량을 변경하고 합계 버튼을 눌렀을 시 합계가 출력
+
+  현금 투입 텍스트에 투입할 금액을 입력하고 현금 투입을 눌렀을 시  거스름 돈 창 호출
+
+  거스름 돈 창에서 계산 버튼을 눌렀을 시 각 동전 별 개수 및 총 총 개수 출력
+
+  두번 째 사진에서는 거스름 돈의 동전 개수가 다른것을 확인할 수 있었습니다.
