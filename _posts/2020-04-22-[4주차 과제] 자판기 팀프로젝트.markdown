@@ -495,9 +495,9 @@ author : Sang Jin
 
   ### 4. 결과 화면
 
-  ![결과 1](/assets/images/결과 1.jpg)
+  ![결과 1](/assets/images/결과 2.jpg)
 
-  ![결과 2](/assets/images/결과 2.jpg)
+  ![결과 2](/assets/images/결과 1.jpg)
 
   +,- 버튼으로 수량을 변경하고 합계 버튼을 눌렀을 시 합계가 출력
 
