@@ -1,0 +1,220 @@
+---
+layout: single
+title: Approx_BinPacking
+date:   2020-06-05 22:00:09 +0900
+categories: jekyll update
+author : Sang Jin
+---
+
+## Approx_BinPacking
+
+Main
+
+~~~java
+import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        int[] items = {7, 5, 6, 4, 2, 3, 7, 5};
+        ArrayList<Bin> arr = new ArrayList<>();
+
+        Fit xf = new xxxxFit();
+        for (int i=0; i<items.length; i++) {
+            xf.fit(arr, new Item(items[i]));
+        }
+
+        for (int i = 0; i < arr.size(); i++) {
+            System.out.println(arr.get(i));
+        }
+
+        System.out.println((arr.size()));
+    }
+}
+~~~
+
+Bin
+
+~~~java
+public class Bin {
+    public int capacity = 10;   // 총 용량
+    public int currentCapacity = 0;        // 현재 용량
+    public int remainCapacity = 10; // 남은 용량
+
+    public boolean check(Item item) {
+        if (remainCapacity >= item.size) return true;
+        else return false;
+    }
+
+    public void add(Item item) {
+        currentCapacity += item.size;
+        remainCapacity = capacity - currentCapacity;
+    }
+
+    @Override
+    public String toString() {
+        return "Bin{" +
+                "capacity=" + capacity +
+                ", currentCapacity=" + currentCapacity +
+                ", remainCapacity=" + remainCapacity +
+                '}';
+    }
+}
+~~~
+
+
+
+Item
+
+~~~java
+public class Item {
+    public int size;
+
+    public Item(int size) {
+        this.size = size;
+    }
+}
+~~~
+
+
+
+Fit 인터페이스
+
+~~~
+import java.util.ArrayList;
+
+public interface Fit {
+    public void fit(ArrayList<Bin> arr, Item item);
+}
+~~~
+
+
+
+1. 최초 적합 (First Fit)
+
+   ~~~java
+   import java.util.ArrayList;
+   
+   public class FirstFit implements Fit {
+       @Override
+       public void fit(ArrayList<Bin> arr, Item item) {
+           for (int i=0; i<arr.size(); i++) {
+               Bin bin = arr.get(i);
+               if(bin.check(item)) {
+                   bin.add(item);
+                   return;
+               }
+           }
+   
+           Bin b = new Bin();
+           b.add(item);
+           arr.add(b);
+       }
+   }
+   ~~~
+
+   
+
+2. 다음 적합 (Next Fit)
+
+   ~~~java
+   import java.util.ArrayList;
+   
+   public class NextFit implements Fit{
+       @Override
+       public void fit(ArrayList<Bin> arr, Item item) {
+           for (int i=0; i<arr.size(); i++) {
+               Bin bin = arr.get(arr.size()-1);
+               if(bin.check(item)) {
+                   bin.add(item);
+                   return;
+               }
+           }
+   
+           Bin b = new Bin();
+           b.add(item);
+           arr.add(b);
+       }
+   }
+   ~~~
+
+   
+
+3. 최선 적합 (Best Fit)
+
+   ~~~java
+   import java.util.ArrayList;
+   public class BestFit implements Fit{
+   
+       @Override
+       public void fit(ArrayList<Bin> arr, Item item) {
+   
+           int N = -1;
+           int lowest = 9999;
+   
+           for (int i=0; i<arr.size(); i++) {
+               Bin bin = arr.get(i);
+   
+               if(bin.check(item)) {
+                   if(bin.remainCapacity - item.size >= 0)
+                       if(lowest>bin.remainCapacity - item.size) {
+                           lowest = bin.remainCapacity - item.size;
+                           N=i;
+                       }
+               }
+           }
+           Bin b;
+           if (N == -1) {
+               b = new Bin();
+               if(b.check(item))
+                   b.add(item);
+               arr.add(b);
+           }
+           else {
+               b = arr.get(N);
+               b.add(item);
+           }
+       }
+   }
+   ~~~
+
+
+
+4. 최악 적합 (Worst Fit)
+
+   ~~~java
+   import java.util.ArrayList;
+   public class WorstFit implements Fit{
+   
+       @Override
+       public void fit(ArrayList<Bin> arr, Item item) {
+   
+           int N = -1;
+           int highest = -9999;
+   
+           for (int i=0; i<arr.size(); i++) {
+               Bin bin = arr.get(i);
+   
+               if(bin.check(item)) {
+                   if(bin.remainCapacity - item.size >= 0)
+                       if(highest<bin.remainCapacity - item.size) {
+                           highest = bin.remainCapacity - item.size;
+                           N=i;
+                       }
+               }
+           }
+           Bin b;
+           if (N == -1) {
+               b = new Bin();
+               if(b.check(item))
+                   b.add(item);
+               arr.add(b);
+           }
+           else {
+               b = arr.get(N);
+               b.add(item);
+           }
+       }
+   }
+   ~~~
+
+   
